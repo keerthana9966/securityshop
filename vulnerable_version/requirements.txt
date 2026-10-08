@@ -1,0 +1,10 @@
+# ⚠️ VULNERABLE VERSION – requirements.txt
+# A06: Vulnerable and Outdated Components
+# Werkzeug 2.3.7 contains CVE-2023-46136 (multipart form data DoS) and is intentionally pinned here.
+# The fixed version upgrades to Werkzeug>=3.0.1
+
+Flask==2.3.3
+Werkzeug==2.3.7        # INTENTIONALLY OUTDATED – CVE-2023-46136 (DoS via multipart/form-data)
+Jinja2==3.1.2
+itsdangerous==2.1.2
+click==8.1.7

@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Search Products{% endblock %}
+{% block content %}
+<div class="container section">
+    <h1 class="page-title">🔍 Product Search</h1>
+
+    <!-- FIX-A03 green notice -->
+    <div style="background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.35);border-left:4px solid #16a34a;border-radius:10px;padding:0.85rem 1rem;margin-bottom:1.5rem;font-size:0.875rem;color:#86efac;line-height:1.6">
+        <strong>✅ FIX-A03 Applied:</strong>
+        Search uses parameterised queries. SQL injection payloads are safely escaped and will not execute.
+    </div>
+
+    <form action="{{ url_for('search') }}" method="get" class="search-form">
+        <div class="search-input-group">
+            <input type="text" name="q" id="search-input"
+                   value="{{ query }}"
+                   placeholder="Search products…"
+                   class="search-input" autocomplete="off">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+
+    {% if query %}
+    <p class="search-meta">Results for: <strong>"{{ query }}"</strong> — {{ products|length }} product(s) found</p>
+    {% endif %}
+
+    <div class="filter-bar">
+        <span class="filter-label">Category:</span>
+        <a href="{{ url_for('search') }}" class="filter-chip active">All</a>
+        <a href="{{ url_for('search') }}?q={{ query }}&cat=Electronics" class="filter-chip">Electronics</a>
+        <a href="{{ url_for('search') }}?q={{ query }}&cat=Furniture" class="filter-chip">Furniture</a>
+        <a href="{{ url_for('search') }}?q={{ query }}&cat=Accessories" class="filter-chip">Accessories</a>
+        <a href="{{ url_for('search') }}?q={{ query }}&cat=Storage" class="filter-chip">Storage</a>
+    </div>
+
+    {% if products %}
+    <div class="product-grid">
+        {% for product in products %}
+        <div class="product-card">
+            <div class="product-image">
+                <div class="product-placeholder">{{ product.name[0] }}</div>
+            </div>
+            <div class="product-info">
+                <span class="product-category">{{ product.category }}</span>
+                <h3 class="product-name">{{ product.name }}</h3>
+                <p class="product-desc">{{ product.description[:80] }}...</p>
+                <div class="product-footer">
+                    <span class="product-price">${{ "%.2f"|format(product.price) }}</span>
+                    <div class="product-actions">
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-outline btn-sm">Details</a>
+                        {% if session.get('user_id') %}
+                        <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="post" style="display:inline">
+                            <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <h3>No products found</h3>
+        <p>Try a different search term.</p>
+        <a href="{{ url_for('search') }}" class="btn btn-primary">Browse All</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

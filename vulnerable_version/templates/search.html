@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Search Products{% endblock %}
+{% block content %}
+<div class="container section">
+    <h1 class="page-title">🔍 Product Search</h1>
+
+    <!-- ⚠️ VULN-A03 indicator -->
+    <div class="vuln-indicator">
+        <strong>⚠️ VULN-A03 SQL Injection:</strong>
+        This search field passes user input directly into a raw SQL query without parameterisation.<br>
+        Try: <code>' OR '1'='1</code> &nbsp;|&nbsp; <code>' UNION SELECT id,username,password,email,role,created_at FROM users--</code>
+    </div>
+
+    <form action="{{ url_for('search') }}" method="get" class="search-form">
+        <div class="search-input-group">
+            <input type="text"
+                   name="q"
+                   id="search-input"
+                   value="{{ query }}"
+                   placeholder="Search products… (try SQL injection payloads)"
+                   class="search-input"
+                   autocomplete="off">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </div>
+    </form>
+
+    {% if error %}
+    <div class="alert alert-danger">
+        <strong>⚠️ Database Error (A05 – Misconfiguration):</strong><br>
+        <code>{{ error }}</code><br>
+        <small>In a production app this error should never be shown to users.</small>
+    </div>
+    {% endif %}
+
+    {% if query %}
+    <p class="search-meta">Results for: <strong>"{{ query }}"</strong> — {{ products|length }} product(s) found</p>
+    {% endif %}
+
+    <!-- Category Filter -->
+    <div class="filter-bar">
+        <span class="filter-label">Category:</span>
+        <a href="{{ url_for('search') }}" class="filter-chip active">All</a>
+        <a href="{{ url_for('search') }}?q={{ query }}&cat=Electronics" class="filter-chip">Electronics</a>
+        <a href="{{ url_for('search') }}?q={{ query }}&cat=Furniture" class="filter-chip">Furniture</a>
+        <a href="{{ url_for('search') }}?q={{ query }}&cat=Accessories" class="filter-chip">Accessories</a>
+        <a href="{{ url_for('search') }}?q={{ query }}&cat=Storage" class="filter-chip">Storage</a>
+    </div>
+
+    {% if products %}
+    <div class="product-grid">
+        {% for product in products %}
+        <div class="product-card">
+            <div class="product-image">
+                <div class="product-placeholder">{{ product[1][0] if product[1] else '?' }}</div>
+            </div>
+            <div class="product-info">
+                <span class="product-category">{{ product['category'] if product['category'] else 'N/A' }}</span>
+                <h3 class="product-name">{{ product['name'] if product['name'] else 'N/A' }}</h3>
+                <p class="product-desc">{{ (product['description'] or '')[:80] }}...</p>
+                <div class="product-footer">
+                    <span class="product-price">
+                        {% if product['price'] is not none and product['price']|string != 'None' %}
+                            ${{ "%.2f"|format(product['price']|float) }}
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </span>
+                    <div class="product-actions">
+                        {% if product['id'] %}
+                        <a href="{{ url_for('product_detail', product_id=product['id']) }}" class="btn btn-outline btn-sm">Details</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">🔍</div>
+        <h3>No products found</h3>
+        <p>Try a different search term or browse all products.</p>
+        <a href="{{ url_for('search') }}" class="btn btn-primary">Browse All</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

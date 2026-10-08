@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}User Management{% endblock %}
+{% block content %}
+<div class="container section">
+    <h1 class="page-title">👥 User Management</h1>
+
+    <div style="background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.35);border-left:4px solid #16a34a;border-radius:10px;padding:0.85rem 1rem;margin-bottom:1.5rem;font-size:0.875rem;color:#86efac">
+        <strong>✅ FIX-A01:</strong> Admin-only access enforced. Password hashes are NOT displayed. bcrypt hashes are resistant to rainbow table attacks.
+    </div>
+
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead><tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>Created</th></tr></thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td><strong>{{ user.username }}</strong></td>
+                    <td>{{ user.email }}</td>
+                    <td><span class="badge {% if user.role == 'admin' %}badge-admin{% else %}badge-user{% endif %}">{{ user.role }}</span></td>
+                    <td>{{ user.created_at[:10] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline" style="margin-top:1rem">← Back to Dashboard</a>
+</div>
+{% endblock %}

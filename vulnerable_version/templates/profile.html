@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}My Profile{% endblock %}
+{% block content %}
+<div class="container section">
+    <h1 class="page-title">👤 My Profile</h1>
+
+    <div class="profile-layout">
+        <div class="profile-card">
+            <div class="profile-avatar">{{ user.username[0]|upper }}</div>
+            <h2 class="profile-name">{{ user.username }}</h2>
+            <p class="profile-email">{{ user.email }}</p>
+            <span class="badge {% if user.role == 'admin' %}badge-admin{% else %}badge-user{% endif %}">
+                {{ user.role|upper }}
+            </span>
+            <div class="profile-meta">
+                <div class="meta-item">
+                    <span class="meta-label">Member since</span>
+                    <span class="meta-value">{{ user.created_at[:10] }}</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">Orders placed</span>
+                    <span class="meta-value">{{ orders|length }}</span>
+                </div>
+            </div>
+            <div class="profile-actions">
+                <a href="{{ url_for('orders') }}" class="btn btn-outline full-width">View All Orders</a>
+                {% if user.role == 'admin' %}
+                <a href="{{ url_for('admin_dashboard') }}" class="btn btn-primary full-width" style="margin-top:0.5rem">⚙️ Admin Panel</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="profile-content">
+            <h3>Recent Orders</h3>
+            {% if orders %}
+            <div class="orders-list">
+                {% for order in orders[:5] %}
+                <div class="order-card">
+                    <div class="order-header">
+                        <span class="order-id">Order #{{ order.id }}</span>
+                        <span class="order-status status-{{ order.status }}">{{ order.status|title }}</span>
+                    </div>
+                    <div class="order-details">
+                        <span class="order-date">📅 {{ order.created_at[:10] }}</span>
+                        <span class="order-total">💰 ${{ "%.2f"|format(order.total) }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state-sm">
+                <p>No orders yet. <a href="{{ url_for('search') }}">Start shopping!</a></p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

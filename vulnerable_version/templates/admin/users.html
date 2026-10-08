@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}User Management{% endblock %}
+{% block content %}
+<div class="container section">
+    <h1 class="page-title">👥 User Management</h1>
+
+    <div class="vuln-indicator">
+        <strong>⚠️ VULN-A01:</strong> This page is accessible by any logged-in user, not just admins.
+        It exposes all user data including hashed passwords.
+    </div>
+
+    <div class="table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Password Hash (MD5)</th>
+                    <th>Created</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td><strong>{{ user.username }}</strong></td>
+                    <td>{{ user.email }}</td>
+                    <td><span class="badge {% if user.role == 'admin' %}badge-admin{% else %}badge-user{% endif %}">{{ user.role }}</span></td>
+                    <td><code class="hash-display">{{ user.password }}</code></td>
+                    <td>{{ user.created_at[:10] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <p class="vuln-note">
+        <strong>Security Note:</strong> Password hashes are displayed here (A01 – unauthorized data exposure).
+        MD5 hashes can be cracked easily using rainbow tables or tools like Hashcat.
+    </p>
+
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline" style="margin-top:1rem">← Back to Dashboard</a>
+</div>
+{% endblock %}

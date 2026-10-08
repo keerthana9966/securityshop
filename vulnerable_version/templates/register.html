@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-icon">✨</div>
+            <h1>Create Account</h1>
+            <p>Join SecureShop today</p>
+        </div>
+
+        <!-- ⚠️ VULN-A07 indicator -->
+        <div class="vuln-indicator vuln-small">
+            <strong>⚠️ VULN-A07:</strong> Passwords stored as MD5 hash (broken). No password complexity requirements. No CSRF protection.
+        </div>
+
+        <form action="{{ url_for('register') }}" method="post" class="auth-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username"
+                       class="form-control"
+                       placeholder="Choose a username"
+                       required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email"
+                       class="form-control"
+                       placeholder="your@email.com"
+                       required autocomplete="email">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password"
+                       class="form-control"
+                       placeholder="Choose a password (any length accepted)"
+                       required autocomplete="new-password">
+            </div>
+            <button type="submit" id="register-btn" class="btn btn-primary btn-lg full-width">Create Account</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Already have an account? <a href="{{ url_for('login') }}">Sign in here</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

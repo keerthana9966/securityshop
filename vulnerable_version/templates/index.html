@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-badge">🔒 Security Research Lab</div>
+        <h1 class="hero-title">Welcome to <span class="gradient-text">SecureShop</span></h1>
+        <p class="hero-subtitle">A controlled e-commerce environment demonstrating OWASP Top 10 vulnerabilities for educational purposes.</p>
+        <div class="hero-actions">
+            <a href="{{ url_for('search') }}" class="btn btn-primary btn-lg">Browse Products</a>
+            {% if not session.get('user_id') %}
+                <a href="{{ url_for('register') }}" class="btn btn-outline btn-lg">Get Started</a>
+            {% endif %}
+        </div>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <span class="stat-number">5</span>
+                <span class="stat-label">Vulnerabilities</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">OWASP</span>
+                <span class="stat-label">Top 10</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number">100%</span>
+                <span class="stat-label">Educational</span>
+            </div>
+        </div>
+    </div>
+    <div class="hero-visual">
+        <div class="vuln-cards">
+            <div class="vuln-card vuln-card-1">
+                <span class="vuln-id">A01</span>
+                <span class="vuln-name">Broken Access Control</span>
+            </div>
+            <div class="vuln-card vuln-card-2">
+                <span class="vuln-id">A03</span>
+                <span class="vuln-name">SQL Injection</span>
+            </div>
+            <div class="vuln-card vuln-card-3">
+                <span class="vuln-id">A05</span>
+                <span class="vuln-name">Misconfiguration</span>
+            </div>
+            <div class="vuln-card vuln-card-4">
+                <span class="vuln-id">A07</span>
+                <span class="vuln-name">Auth Weakness</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Featured Products</h2>
+            <a href="{{ url_for('search') }}" class="btn btn-outline btn-sm">View All →</a>
+        </div>
+        <div class="product-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <div class="product-image">
+                    <div class="product-placeholder">{{ product.name[0] }}</div>
+                </div>
+                <div class="product-info">
+                    <span class="product-category">{{ product.category }}</span>
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <p class="product-desc">{{ product.description[:80] }}...</p>
+                    <div class="product-footer">
+                        <span class="product-price">${{ "%.2f"|format(product.price) }}</span>
+                        <div class="product-actions">
+                            <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-outline btn-sm">Details</a>
+                            {% if session.get('user_id') %}
+                            <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="post" style="display:inline">
+                                <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button>
+                            </form>
+                            {% else %}
+                            <a href="{{ url_for('login') }}" class="btn btn-primary btn-sm">Add to Cart</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Vulnerability Lab Info -->
+<section class="section vuln-lab-section">
+    <div class="container">
+        <h2 class="section-title">🔍 Vulnerability Lab</h2>
+        <p class="section-subtitle">This application intentionally contains the following OWASP Top 10 vulnerabilities for educational testing.</p>
+        <div class="vuln-lab-grid">
+            <div class="lab-card">
+                <div class="lab-icon">🔓</div>
+                <h3>A01 – Broken Access Control</h3>
+                <p>Navigate to <code>/admin</code> while logged in as a regular user to see admin panel without authorization check.</p>
+                <span class="lab-severity high">HIGH</span>
+            </div>
+            <div class="lab-card">
+                <div class="lab-icon">💉</div>
+                <h3>A03 – SQL Injection</h3>
+                <p>Try searching: <code>' OR '1'='1</code> in the search box to bypass query filtering.</p>
+                <span class="lab-severity critical">CRITICAL</span>
+            </div>
+            <div class="lab-card">
+                <div class="lab-icon">⚙️</div>
+                <h3>A05 – Security Misconfiguration</h3>
+                <p>Visit <code>/debug/config</code> to see the secret key, database path and all environment variables exposed.</p>
+                <span class="lab-severity high">HIGH</span>
+            </div>
+            <div class="lab-card">
+                <div class="lab-icon">🔑</div>
+                <h3>A07 – Auth Weakness</h3>
+                <p>Passwords are hashed with MD5 (broken). No rate limiting on login endpoint allows brute-force attacks.</p>
+                <span class="lab-severity high">HIGH</span>
+            </div>
+            <div class="lab-card">
+                <div class="lab-icon">📦</div>
+                <h3>A06 – Outdated Components</h3>
+                <p>Werkzeug 2.0.3 is intentionally pinned. Contains CVE-2023-25577 (Multipart DoS vulnerability).</p>
+                <span class="lab-severity medium">MEDIUM</span>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

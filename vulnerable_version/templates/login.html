@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-icon">🔑</div>
+            <h1>Sign In</h1>
+            <p>Access your SecureShop account</p>
+        </div>
+
+        <!-- ⚠️ VULN-A07 indicator -->
+        <div class="vuln-indicator vuln-small">
+            <strong>⚠️ VULN-A07:</strong> No brute-force protection. No CAPTCHA. No account lockout. Session not regenerated on login.
+        </div>
+
+        <form action="{{ url_for('login') }}" method="post" class="auth-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username"
+                       class="form-control"
+                       placeholder="Enter username"
+                       required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password"
+                       class="form-control"
+                       placeholder="Enter password"
+                       required autocomplete="current-password">
+            </div>
+            <button type="submit" id="login-btn" class="btn btn-primary btn-lg full-width">Sign In</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+        </div>
+
+        <div class="demo-credentials">
+            <h4>🧪 Demo Credentials</h4>
+            <div class="cred-row">
+                <span class="cred-role">Admin:</span>
+                <code>admin / admin123</code>
+            </div>
+            <div class="cred-row">
+                <span class="cred-role">User:</span>
+                <code>alice / 123456</code>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

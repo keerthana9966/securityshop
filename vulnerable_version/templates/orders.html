@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block title %}Order History{% endblock %}
+{% block content %}
+<div class="container section">
+    <h1 class="page-title">📦 Order History</h1>
+
+    {% if orders %}
+    <div class="orders-table-wrapper">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Date</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td><strong>#{{ order.id }}</strong></td>
+                    <td>{{ order.created_at[:16] }}</td>
+                    <td>${{ "%.2f"|format(order.total) }}</td>
+                    <td><span class="order-status status-{{ order.status }}">{{ order.status|title }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">📦</div>
+        <h3>No orders yet</h3>
+        <p>You haven't placed any orders.</p>
+        <a href="{{ url_for('search') }}" class="btn btn-primary">Start Shopping</a>
+    </div>
+    {% endif %}
+
+    <a href="{{ url_for('profile') }}" class="btn btn-outline" style="margin-top:1.5rem">← Back to Profile</a>
+</div>
+{% endblock %}

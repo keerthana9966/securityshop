@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-icon">✨</div>
+            <h1>Create Account</h1>
+            <p>Join SecureShop today</p>
+        </div>
+
+        <div style="background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.35);border-left:4px solid #16a34a;border-radius:8px;padding:0.65rem 0.85rem;margin-bottom:1rem;font-size:0.8rem;color:#86efac">
+            <strong>✅ FIX-A07:</strong> Passwords hashed with bcrypt (rounds=12). Min 8 characters enforced.
+        </div>
+
+        <form action="{{ url_for('register') }}" method="post" class="auth-form">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" class="form-control"
+                       placeholder="Choose a username" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" class="form-control"
+                       placeholder="your@email.com" required autocomplete="email">
+            </div>
+            <div class="form-group">
+                <label for="password">Password <span style="color:var(--text-muted);font-size:0.75rem">(min 8 characters)</span></label>
+                <input type="password" id="password" name="password" class="form-control"
+                       placeholder="At least 8 characters" required minlength="8" autocomplete="new-password">
+            </div>
+            <button type="submit" id="register-btn" class="btn btn-primary btn-lg full-width">Create Account</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>Already have an account? <a href="{{ url_for('login') }}">Sign in here</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

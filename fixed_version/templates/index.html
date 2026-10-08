@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <div class="hero-badge">✅ Security-Hardened Application</div>
+        <h1 class="hero-title">Welcome to <span class="gradient-text">SecureShop</span></h1>
+        <p class="hero-subtitle">The fixed and secure version of the e-commerce demo — all OWASP Top 10 vulnerabilities properly remediated.</p>
+        <div class="hero-actions">
+            <a href="{{ url_for('search') }}" class="btn btn-primary btn-lg">Browse Products</a>
+            {% if not session.get('user_id') %}
+                <a href="{{ url_for('register') }}" class="btn btn-outline btn-lg">Get Started</a>
+            {% endif %}
+        </div>
+        <div class="hero-stats">
+            <div class="stat-item"><span class="stat-number">5</span><span class="stat-label">Fixes Applied</span></div>
+            <div class="stat-item"><span class="stat-number">bcrypt</span><span class="stat-label">Password Hash</span></div>
+            <div class="stat-item"><span class="stat-number">RBAC</span><span class="stat-label">Access Control</span></div>
+        </div>
+    </div>
+    <div class="hero-visual">
+        <div class="vuln-cards">
+            <div class="vuln-card" style="border-left:3px solid #16a34a">
+                <span class="vuln-id" style="color:#86efac">A01 ✅</span>
+                <span class="vuln-name">Role-Based Access</span>
+            </div>
+            <div class="vuln-card" style="border-left:3px solid #16a34a">
+                <span class="vuln-id" style="color:#86efac">A03 ✅</span>
+                <span class="vuln-name">Parameterised SQL</span>
+            </div>
+            <div class="vuln-card" style="border-left:3px solid #16a34a">
+                <span class="vuln-id" style="color:#86efac">A05 ✅</span>
+                <span class="vuln-name">Secure Config</span>
+            </div>
+            <div class="vuln-card" style="border-left:3px solid #16a34a">
+                <span class="vuln-id" style="color:#86efac">A07 ✅</span>
+                <span class="vuln-name">bcrypt + Rate Limit</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Featured Products</h2>
+            <a href="{{ url_for('search') }}" class="btn btn-outline btn-sm">View All →</a>
+        </div>
+        <div class="product-grid">
+            {% for product in products %}
+            <div class="product-card">
+                <div class="product-image">
+                    <div class="product-placeholder">{{ product.name[0] }}</div>
+                </div>
+                <div class="product-info">
+                    <span class="product-category">{{ product.category }}</span>
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <p class="product-desc">{{ product.description[:80] }}...</p>
+                    <div class="product-footer">
+                        <span class="product-price">${{ "%.2f"|format(product.price) }}</span>
+                        <div class="product-actions">
+                            <a href="{{ url_for('product_detail', product_id=product.id) }}" class="btn btn-outline btn-sm">Details</a>
+                            {% if session.get('user_id') %}
+                            <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="post" style="display:inline">
+                                <button type="submit" class="btn btn-primary btn-sm">Add to Cart</button>
+                            </form>
+                            {% else %}
+                            <a href="{{ url_for('login') }}" class="btn btn-primary btn-sm">Add to Cart</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Security Fixes Info -->
+<section class="section" style="background: var(--bg-secondary)">
+    <div class="container">
+        <h2 class="section-title">🔐 Security Fixes Applied</h2>
+        <p class="section-subtitle">Every vulnerability from the vulnerable version has been properly remediated.</p>
+        <div class="vuln-lab-grid">
+            <div class="lab-card" style="border-color:rgba(22,163,74,0.3)">
+                <div class="lab-icon">🔒</div>
+                <h3>A01 – Access Control Fixed</h3>
+                <p><code>@admin_required</code> decorator applied to all admin routes. Regular users receive HTTP 403.</p>
+                <span class="fixed-badge">FIXED</span>
+            </div>
+            <div class="lab-card" style="border-color:rgba(22,163,74,0.3)">
+                <div class="lab-icon">🛡️</div>
+                <h3>A03 – SQL Injection Fixed</h3>
+                <p>All queries use parameterised placeholders (<code>?</code>). No user input is concatenated into SQL.</p>
+                <span class="fixed-badge">FIXED</span>
+            </div>
+            <div class="lab-card" style="border-color:rgba(22,163,74,0.3)">
+                <div class="lab-icon">⚙️</div>
+                <h3>A05 – Misconfiguration Fixed</h3>
+                <p>DEBUG=False, secret key from env var, no debug endpoints, custom error pages.</p>
+                <span class="fixed-badge">FIXED</span>
+            </div>
+            <div class="lab-card" style="border-color:rgba(22,163,74,0.3)">
+                <div class="lab-icon">🔑</div>
+                <h3>A07 – Auth Fixed</h3>
+                <p>bcrypt (rounds=12) replaces MD5. Rate limiting (5/min) prevents brute force. Session regenerated on login.</p>
+                <span class="fixed-badge">FIXED</span>
+            </div>
+            <div class="lab-card" style="border-color:rgba(22,163,74,0.3)">
+                <div class="lab-icon">📦</div>
+                <h3>A06 – Components Fixed</h3>
+                <p>Werkzeug updated to 3.0.3. All dependencies pinned to latest secure versions.</p>
+                <span class="fixed-badge">FIXED</span>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

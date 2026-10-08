@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="container section">
+
+    <div style="background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.35);border-left:4px solid #16a34a;border-radius:10px;padding:0.85rem 1rem;margin-bottom:1.5rem;font-size:0.875rem;color:#86efac">
+        <strong>✅ FIX-A01 – Broken Access Control Remediated:</strong>
+        This page is protected by the <code>@admin_required</code> decorator.
+        Regular users are returned HTTP 403 Forbidden — they cannot access this panel.
+    </div>
+
+    <div class="admin-header">
+        <h1 class="page-title">⚙️ Admin Dashboard</h1>
+        <div class="admin-actions">
+            <a href="{{ url_for('admin_add_product') }}" class="btn btn-primary">+ Add Product</a>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card"><div class="stat-card-icon">👥</div><div class="stat-card-value">{{ stats.total_users }}</div><div class="stat-card-label">Total Users</div></div>
+        <div class="stat-card"><div class="stat-card-icon">📦</div><div class="stat-card-value">{{ stats.total_products }}</div><div class="stat-card-label">Products</div></div>
+        <div class="stat-card"><div class="stat-card-icon">🛒</div><div class="stat-card-value">{{ stats.total_orders }}</div><div class="stat-card-label">Orders</div></div>
+        <div class="stat-card"><div class="stat-card-icon">💰</div><div class="stat-card-value">${{ "%.0f"|format(stats.total_revenue) }}</div><div class="stat-card-label">Revenue</div></div>
+    </div>
+
+    <div class="admin-section">
+        <div class="section-header">
+            <h2>👥 User Accounts</h2>
+            <a href="{{ url_for('admin_users') }}" class="btn btn-outline btn-sm">View All</a>
+        </div>
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead><tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>Created</th></tr></thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td><strong>{{ user.username }}</strong></td>
+                        <td>{{ user.email }}</td>
+                        <td><span class="badge {% if user.role == 'admin' %}badge-admin{% else %}badge-user{% endif %}">{{ user.role }}</span></td>
+                        <td>{{ user.created_at[:10] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="admin-section">
+        <div class="section-header">
+            <h2>📦 Products</h2>
+            <a href="{{ url_for('admin_add_product') }}" class="btn btn-primary btn-sm">+ Add Product</a>
+        </div>
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead><tr><th>ID</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr></thead>
+                <tbody>
+                    {% for product in products %}
+                    <tr>
+                        <td>{{ product.id }}</td>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.category }}</td>
+                        <td>${{ "%.2f"|format(product.price) }}</td>
+                        <td>{{ product.stock }}</td>
+                        <td class="table-actions">
+                            <a href="{{ url_for('admin_edit_product', product_id=product.id) }}" class="btn btn-outline btn-xs">Edit</a>
+                            <form action="{{ url_for('admin_delete_product', product_id=product.id) }}" method="post" style="display:inline"
+                                  onsubmit="return confirm('Delete this product?')">
+                                <button type="submit" class="btn btn-danger btn-xs">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="admin-section">
+        <h2>🛒 Recent Orders</h2>
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead><tr><th>Order ID</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td>#{{ order.id }}</td>
+                        <td>{{ order.username }}</td>
+                        <td>${{ "%.2f"|format(order.total) }}</td>
+                        <td><span class="order-status status-{{ order.status }}">{{ order.status|title }}</span></td>
+                        <td>{{ order.created_at[:10] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
